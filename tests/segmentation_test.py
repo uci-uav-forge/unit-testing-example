@@ -13,8 +13,7 @@ def test_runs_without_error():
     assert pred_mask.shape == rand_img.shape[:-1]
     assert pred_colors.shape == (3, 3)
 
-def test_iou_above_threshold():
-    THRESHOLD=0.3
+def assert_iou_above_threshold(threshold, do_visualize=False):
     IMAGES_FOLDER = "tests/segmentation_images"
 
     images_and_masks = []
@@ -34,14 +33,22 @@ def test_iou_above_threshold():
     for img, mask in images_and_masks:
         pred_mask, pred_colors = segment_image(img)
         iou = jaccard_index(torch.from_numpy(pred_mask).flatten(), torch.from_numpy(mask).flatten())
-        if iou<THRESHOLD:
+        if do_visualize and iou<threshold:
             cv2.imshow("mask", mask*120)
             cv2.imshow("pred_mask", pred_mask*120)
             cv2.waitKey(0)
         ious.append(iou)
     
+    print(f"IOU Threshold: {threshold}")
     print(ious)
     print(f"Mean IOU: {np.mean(ious)}")
-    assert all([iou > THRESHOLD for iou in ious])
+    assert all([iou > threshold for iou in ious])
 
-test_iou_above_threshold()
+def test_iou_above_threshold_25_percent():
+    assert_iou_above_threshold(0.25)
+
+def test_iou_above_threshold_50_percent():
+    assert_iou_above_threshold(0.5)
+
+def test_iou_above_threshold_75_percent():
+    assert_iou_above_threshold(0.75)
