@@ -23,5 +23,15 @@ def segment_image(img: np.ndarray):
         attempts = 10, 
         flags = cv2.KMEANS_RANDOM_CENTERS)
     
+    # sort the centers by distance from the center of the image
+    sorted_indices = np.flip(np.argsort(centers[:, 3]))
+
+    new_labels = np.zeros_like(bestLabels)
+    # re-assign labels so the furthest cluster is 0, the closest is 2
+    for new_label, old_label in enumerate(sorted_indices):
+        new_labels[bestLabels == old_label] = new_label
+
+    centers = centers[sorted_indices, :3]
+
     # return the mask and the colors
-    return bestLabels.reshape(img.shape[:-1]).astype(np.uint8), centers
+    return new_labels.reshape(img.shape[:-1]).astype(np.uint8), centers
