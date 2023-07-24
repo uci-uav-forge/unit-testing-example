@@ -1,7 +1,5 @@
 from src.segmentation import segment_image
 
-import os
-
 import cv2
 import numpy as np
 import torch
