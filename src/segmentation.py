@@ -5,7 +5,9 @@ def segment_image(img: np.ndarray):
     """
     Get the colors from an image using KMeans clustering
     :param img: The image to get the colors from
-    :return: (mask, colors) where mask  
+    :return: (mask, colors) where mask is a 2D array of the same shape as img, and colors is a 3x3 array of the colors
+    mask is 0 for the background, 1 where the shape is, and 2 where the letter is
+    colors[0] is the color of the background, colors[1] is the color of the shape, colors[2] is the color of the letter 
     """
     # Reshape the image to be a list of pixels
     pixel_list = img.reshape((img.shape[0] * img.shape[1], 3))
@@ -34,4 +36,4 @@ def segment_image(img: np.ndarray):
     centers = centers[sorted_indices, :3]
 
     # return the mask and the colors
-    return new_labels.reshape(img.shape[:-1]).astype(np.uint8), centers
+    return new_labels.reshape(img.shape[:-1]).astype(np.uint8), centers.astype(np.uint8)
