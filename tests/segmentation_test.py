@@ -65,6 +65,8 @@ def assert_iou_above_threshold(threshold, do_visualize=False):
     print(f"Mean IOU: {np.mean(ious)}")
     assert all([iou > threshold for iou in ious])
 
+# The segmentation model need not pass all these tests. They are here to show the model performance at a glance to measure improvement or regression in performance.
+
 def test_iou_above_threshold_25_percent():
     assert_iou_above_threshold(0.25)
 
