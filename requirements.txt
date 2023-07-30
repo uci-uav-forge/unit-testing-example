@@ -2,3 +2,8 @@ torch
 opencv-python
 numpy
 torchmetrics
+
+# Testing tools
+pytest
+coverage
+pytest-benchmark
