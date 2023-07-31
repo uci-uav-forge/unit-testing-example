@@ -11,6 +11,29 @@ def test_runs_without_error():
     assert pred_mask.shape == rand_img.shape[:-1]
     assert pred_colors.shape == (3, 3)
 
+def test_with_all_black_image():
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    pred_mask, pred_colors = segment_image(img)
+    assert pred_mask.shape == img.shape[:-1]
+    assert pred_colors.shape == (3, 3)
+    # assert all predicted colors are black
+    assert all([np.all(color == np.array([0, 0, 0])) for color in pred_colors])
+
+def test_with_concentric_circles():
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    SHAPE_COLOR = (255,0,0)
+    LETTER_COLOR = (0,255,0)
+    cv2.circle(img, (50, 50), 40, SHAPE_COLOR, -1)
+    cv2.circle(img, (50, 50), 20, LETTER_COLOR, -1)
+    pred_mask, pred_colors = segment_image(img)
+    assert pred_mask.shape == img.shape[:-1]
+    assert pred_colors.shape == (3, 3)
+
+    background_color, shape_color, letter_color = pred_colors
+    assert np.all(shape_color == SHAPE_COLOR)
+    assert np.all(letter_color == LETTER_COLOR)
+    assert np.all(background_color == np.array([0, 0, 0]))
+
 def assert_iou_above_threshold(threshold, do_visualize=False):
     IMAGES_FOLDER = "tests/segmentation_images"
 
@@ -41,6 +64,8 @@ def assert_iou_above_threshold(threshold, do_visualize=False):
     print(ious)
     print(f"Mean IOU: {np.mean(ious)}")
     assert all([iou > threshold for iou in ious])
+
+# The segmentation model need not pass all these tests. They are here to show the model performance at a glance to measure improvement or regression in performance.
 
 def test_iou_above_threshold_25_percent():
     assert_iou_above_threshold(0.25)
