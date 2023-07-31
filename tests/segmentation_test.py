@@ -5,9 +5,9 @@ import numpy as np
 import torch
 from torchmetrics import JaccardIndex
 
-def test_runs_without_error():
+def test_runs_without_error(benchmark):
     rand_img = np.random.randint(0, 255, size=(100, 100, 3), dtype=np.uint8)
-    pred_mask, pred_colors = segment_image(rand_img)
+    pred_mask, pred_colors = benchmark(segment_image, rand_img)
     assert pred_mask.shape == rand_img.shape[:-1]
     assert pred_colors.shape == (3, 3)
 
